@@ -1,0 +1,16 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://cn6mttho3fn0x"]
+
+[ext_resource type="FontFile" uid="uid://ydpk2m4l4gyr" path="res://Resources/UI/Warenhaus-Standard.otf" id="1_v8sq0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rghqs"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cepi7"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 1)
+
+[resource]
+default_font = ExtResource("1_v8sq0")
+default_font_size = 32
+BoxContainer/constants/separation = 12
+Panel/styles/panel = SubResource("StyleBoxFlat_rghqs")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_cepi7")

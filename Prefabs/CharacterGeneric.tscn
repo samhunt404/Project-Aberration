@@ -1,0 +1,102 @@
+[gd_scene load_steps=3 format=3 uid="uid://bpmvg3qwqu65n"]
+
+[ext_resource type="Theme" uid="uid://cn6mttho3fn0x" path="res://Resources/UI/Base_Theme.tres" id="1_5nr3j"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_mtjie"]
+size = Vector2(384, 500)
+
+[node name="CharacterGeneric" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_5nr3j")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_5nr3j")
+alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+text = "Label 1"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+text = "Label 1"
+fit_content = true
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+text = "Label 1"
+fit_content = true
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+texture = SubResource("PlaceholderTexture2D_mtjie")
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+
+[node name="TextControlSlider" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="VSlider" type="VSlider" parent="VBoxContainer/HBoxContainer/HBoxContainer/TextControlSlider"]
+layout_mode = 2
+max_value = 4.0
+value = 2.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer/TextControlSlider"]
+layout_mode = 2
+text = "C
+O
+N
+F
+I
+D
+E
+N
+C
+E"
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+theme = ExtResource("1_5nr3j")
+bbcode_enabled = true
+text = "
+[center]This sentence is around eight, standard size words[/center]
+
+"
+fit_content = true
+autowrap_mode = 0
