@@ -1,9 +1,103 @@
-[gd_scene format=3 uid="uid://b5wupm5oc4foy"]
+[gd_scene load_steps=17 format=3 uid="uid://b5wupm5oc4foy"]
 
-[node name="Main" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[ext_resource type="PackedScene" uid="uid://ce1jsq0cfp0wt" path="res://Assets/EnvironmentOutdoorLevel/Level.blend" id="1_kwsj5"]
+[ext_resource type="Shader" path="res://Resources/Shaders/GlobalPost.gdshader" id="2_gs1cq"]
+[ext_resource type="Shader" path="res://Resources/Shaders/MoebiusBase.gdshader" id="2_ysk7a"]
+[ext_resource type="Texture2D" uid="uid://c3u1e0ty6256" path="res://Assets/EnvironmentOutdoorLevel/Textures/BaseAlbedo.png" id="3_t8bk6"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vtkpa"]
+sky_top_color = Color(0.239216, 0.517647, 0.290196, 1)
+sky_horizon_color = Color(0.796078, 0.854902, 0.862745, 1)
+ground_bottom_color = Color(0.807843, 0.752941, 0.690196, 1)
+
+[sub_resource type="Sky" id="Sky_rekcw"]
+sky_material = SubResource("ProceduralSkyMaterial_vtkpa")
+
+[sub_resource type="Environment" id="Environment_5i78t"]
+background_mode = 2
+background_color = Color(0.211765, 0.309804, 0.231373, 1)
+sky = SubResource("Sky_rekcw")
+glow_enabled = true
+glow_normalized = true
+glow_strength = 1.24
+glow_blend_mode = 1
+adjustment_enabled = true
+adjustment_brightness = 1.19
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_gkwpe"]
+frequency = 0.0715
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4egbp"]
+as_normal_map = true
+noise = SubResource("FastNoiseLite_gkwpe")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_emtjn"]
+render_priority = 0
+shader = ExtResource("2_ysk7a")
+shader_parameter/shadowCol = Color(0.258824, 0.141176, 0.0196078, 1)
+shader_parameter/bands = 3
+shader_parameter/color = ExtResource("3_t8bk6")
+shader_parameter/bump = SubResource("NoiseTexture2D_4egbp")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jwnq3"]
+render_priority = 0
+shader = ExtResource("2_ysk7a")
+shader_parameter/shadowCol = null
+shader_parameter/bands = 3
+
+[sub_resource type="Gradient" id="Gradient_fg5al"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(0, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_priv4"]
+gradient = SubResource("Gradient_fg5al")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dq5uu"]
+render_priority = 0
+shader = ExtResource("2_ysk7a")
+shader_parameter/shadowCol = Color(0.227451, 0.376471, 0.443137, 1)
+shader_parameter/bands = 3
+shader_parameter/color = SubResource("GradientTexture1D_priv4")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_orke5"]
+render_priority = 0
+shader = ExtResource("2_gs1cq")
+shader_parameter/sensitivity = 0.5
+shader_parameter/normControl = 1.365
+shader_parameter/colControl = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_rhgbj"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_5i78t")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.878041, 0.462277, -0.123867, -1.07923e-08, 0.258819, 0.965926, 0.478585, 0.848123, -0.227254, 0, 0, 0)
+shadow_enabled = true
+directional_shadow_mode = 0
+directional_shadow_blend_splits = true
+
+[node name="Level" parent="." instance=ExtResource("1_kwsj5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.284418, 0, 0.618691)
+
+[node name="Plane_001" parent="Level" index="0"]
+material_override = SubResource("ShaderMaterial_emtjn")
+
+[node name="Gate" parent="Level" index="1"]
+material_override = SubResource("ShaderMaterial_jwnq3")
+
+[node name="Gate_001" parent="Level" index="2"]
+material_override = SubResource("ShaderMaterial_dq5uu")
+
+[node name="Gate_009" parent="Level" index="3"]
+surface_material_override/0 = SubResource("ShaderMaterial_dq5uu")
+
+[node name="PostController" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_orke5")
+mesh = SubResource("QuadMesh_rhgbj")
+
+[editable path="Level"]

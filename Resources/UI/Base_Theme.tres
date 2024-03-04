@@ -2,15 +2,17 @@
 
 [ext_resource type="FontFile" uid="uid://ydpk2m4l4gyr" path="res://Resources/UI/Warenhaus-Standard.otf" id="1_v8sq0"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rghqs"]
-bg_color = Color(0.129412, 0.129412, 0.129412, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_draic"]
+bg_color = Color(0.760784, 0.6, 0.396078, 0.662745)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cepi7"]
-bg_color = Color(0.129412, 0.129412, 0.129412, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ya7ay"]
+bg_color = Color(0.760784, 0.6, 0.396078, 0.662745)
 
 [resource]
 default_font = ExtResource("1_v8sq0")
 default_font_size = 32
 BoxContainer/constants/separation = 12
-Panel/styles/panel = SubResource("StyleBoxFlat_rghqs")
-PanelContainer/styles/panel = SubResource("StyleBoxFlat_cepi7")
+Label/colors/font_color = Color(0, 0, 0, 1)
+Panel/styles/panel = SubResource("StyleBoxFlat_draic")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_ya7ay")
+RichTextLabel/colors/default_color = Color(0, 0, 0, 1)

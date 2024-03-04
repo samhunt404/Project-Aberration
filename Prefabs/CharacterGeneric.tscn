@@ -1,6 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://bpmvg3qwqu65n"]
+[gd_scene load_steps=8 format=3 uid="uid://bpmvg3qwqu65n"]
 
 [ext_resource type="Theme" uid="uid://cn6mttho3fn0x" path="res://Resources/UI/Base_Theme.tres" id="1_5nr3j"]
+[ext_resource type="Texture2D" uid="uid://dhi7awqdeqjd4" path="res://Assets/CharacterUI/FaceBase.png" id="2_5d3je"]
+[ext_resource type="Script" path="res://Scripts/CharacterUI/CharacterManager.gd" id="2_ixod8"]
+[ext_resource type="Script" path="res://Scripts/Classes/CustomResources/CharacterPersonality.gd" id="3_7xhko"]
+
+[sub_resource type="Curve" id="Curve_n8n63"]
+min_value = -1.0
+_data = [Vector2(0, -0.6), 0.0, 3.2, 0, 1, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Resource" id="Resource_prfik"]
+script = ExtResource("3_7xhko")
+startGaurd = 100
+certaintyCurve = SubResource("Curve_n8n63")
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_mtjie"]
 size = Vector2(384, 500)
@@ -13,8 +26,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_5nr3j")
+script = ExtResource("2_ixod8")
+personality = SubResource("Resource_prfik")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MasterContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,73 +39,149 @@ grow_vertical = 2
 theme = ExtResource("1_5nr3j")
 alignment = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="MidLevelContainer" type="HBoxContainer" parent="MasterContainer"]
 layout_mode = 2
 theme = ExtResource("1_5nr3j")
 alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+[node name="SocialQueueContainer" type="VBoxContainer" parent="MasterContainer/MidLevelContainer"]
 layout_mode = 2
 theme = ExtResource("1_5nr3j")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="SocialQueueLabel" type="RichTextLabel" parent="MasterContainer/MidLevelContainer/SocialQueueContainer"]
 layout_mode = 2
 theme = ExtResource("1_5nr3j")
-text = "Label 1"
+text = "Queue	
+"
 fit_content = true
+scroll_active = false
 autowrap_mode = 0
 
-[node name="RichTextLabel2" type="RichTextLabel" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="SocialQueueEmotion" type="TextureRect" parent="MasterContainer/MidLevelContainer/SocialQueueContainer"]
+texture_filter = 1
 layout_mode = 2
-theme = ExtResource("1_5nr3j")
-text = "Label 1"
-fit_content = true
+texture = ExtResource("2_5d3je")
 
-[node name="RichTextLabel3" type="RichTextLabel" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-theme = ExtResource("1_5nr3j")
-text = "Label 1"
-fit_content = true
-
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer"]
+[node name="CharacterPortrait" type="TextureRect" parent="MasterContainer/MidLevelContainer"]
 layout_mode = 2
 theme = ExtResource("1_5nr3j")
 texture = SubResource("PlaceholderTexture2D_mtjie")
 stretch_mode = 5
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer"]
+[node name="DialogControlSliders" type="HBoxContainer" parent="MasterContainer/MidLevelContainer"]
 layout_mode = 2
 theme = ExtResource("1_5nr3j")
+theme_override_constants/separation = 66
 
-[node name="TextControlSlider" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="CertaintyContainer" type="PanelContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders"]
+layout_mode = 2
+
+[node name="TextControlSlider" type="HBoxContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders/CertaintyContainer"]
 layout_mode = 2
 alignment = 2
 
-[node name="VSlider" type="VSlider" parent="VBoxContainer/HBoxContainer/HBoxContainer/TextControlSlider"]
+[node name="VSlider" type="VSlider" parent="MasterContainer/MidLevelContainer/DialogControlSliders/CertaintyContainer/TextControlSlider"]
 layout_mode = 2
 max_value = 4.0
 value = 2.0
 tick_count = 5
 ticks_on_borders = true
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer/TextControlSlider"]
+[node name="Label" type="Label" parent="MasterContainer/MidLevelContainer/DialogControlSliders/CertaintyContainer/TextControlSlider"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "C
-O
-N
-F
+E 
+R
+T
+A
 I
-D
-E
 N
-C
+T
+Y
+"
+
+[node name="VolumeContainer" type="PanelContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders"]
+layout_mode = 2
+
+[node name="TextControlSlider2" type="HBoxContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders/VolumeContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="VSlider" type="VSlider" parent="MasterContainer/MidLevelContainer/DialogControlSliders/VolumeContainer/TextControlSlider2"]
+layout_mode = 2
+max_value = 4.0
+value = 2.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="Label" type="Label" parent="MasterContainer/MidLevelContainer/DialogControlSliders/VolumeContainer/TextControlSlider2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "V
+O
+L
+U
+M
 E"
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+[node name="EmotionContainer" type="PanelContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders"]
+layout_mode = 2
+
+[node name="TextControlSlider3" type="HBoxContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders/EmotionContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="VSlider" type="VSlider" parent="MasterContainer/MidLevelContainer/DialogControlSliders/EmotionContainer/TextControlSlider3"]
+layout_mode = 2
+max_value = 4.0
+value = 2.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="Label" type="Label" parent="MasterContainer/MidLevelContainer/DialogControlSliders/EmotionContainer/TextControlSlider3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "E
+M
+O
+T
+I
+O
+N"
+
+[node name="ProximetyContainer" type="PanelContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders"]
+layout_mode = 2
+
+[node name="TextControlSlider4" type="HBoxContainer" parent="MasterContainer/MidLevelContainer/DialogControlSliders/ProximetyContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="VSlider" type="VSlider" parent="MasterContainer/MidLevelContainer/DialogControlSliders/ProximetyContainer/TextControlSlider4"]
+layout_mode = 2
+max_value = 4.0
+value = 2.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="Label" type="Label" parent="MasterContainer/MidLevelContainer/DialogControlSliders/ProximetyContainer/TextControlSlider4"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "P
+R
+O
+X
+I
+M
+E
+T
+Y"
+
+[node name="DialogContainer" type="PanelContainer" parent="MasterContainer"]
 layout_mode = 2
 theme = ExtResource("1_5nr3j")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/PanelContainer"]
+[node name="Dialog" type="RichTextLabel" parent="MasterContainer/DialogContainer"]
 layout_mode = 2
 theme = ExtResource("1_5nr3j")
 bbcode_enabled = true
