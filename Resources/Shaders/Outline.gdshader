@@ -8,11 +8,13 @@ const mat3 sobel_x = mat3(vec3(-1.0,0.0,1.0),
 const mat3 sobel_y = mat3(vec3(-1.0,-2.0,-1.0),
 						vec3(0.0,0.0,0.0),
 						vec3(1.0,2.0,1.0));
+uniform sampler2D depthTex : hint_depth_texture;
 uniform sampler2D screenTex : hint_screen_texture;
 uniform sampler2D normalTex : hint_normal_roughness_texture;
 
 uniform float sensitivity = 0.5;
-uniform float normControl = 0.001;
+uniform float depthControl = 0.01;
+uniform float normControl = 0.01;
 uniform float colControl = 1;
 
 void vertex() {
@@ -51,10 +53,13 @@ float sobel(sampler2D sampler,vec2 coord, vec2 pixSize)
 	float sob = sqrt((Gx * Gx) + (Gy * Gy));
 	return sob;
 }
+
 void fragment() {
 	bool colOutline = (sobel(screenTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * colControl < sensitivity);
 	bool normOutline = (sobel(normalTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * normControl < sensitivity);
-	ALBEDO = textureLod(screenTex,SCREEN_UV,0.0).rgb * float(colOutline && normOutline);
+	bool depthOutline = (sobel(depthTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * depthControl < sensitivity);
+	ALBEDO = vec3(0.0);
+	ALPHA = 1.0 - float(colOutline && normOutline && depthOutline);
 }
 
 //void light() {

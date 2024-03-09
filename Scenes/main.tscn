@@ -1,9 +1,17 @@
-[gd_scene load_steps=17 format=3 uid="uid://b5wupm5oc4foy"]
+[gd_scene load_steps=31 format=3 uid="uid://b5wupm5oc4foy"]
 
 [ext_resource type="PackedScene" uid="uid://ce1jsq0cfp0wt" path="res://Assets/EnvironmentOutdoorLevel/Level.blend" id="1_kwsj5"]
-[ext_resource type="Shader" path="res://Resources/Shaders/GlobalPost.gdshader" id="2_gs1cq"]
+[ext_resource type="Shader" path="res://Resources/Shaders/Outline.gdshader" id="2_gs1cq"]
 [ext_resource type="Shader" path="res://Resources/Shaders/MoebiusBase.gdshader" id="2_ysk7a"]
 [ext_resource type="Texture2D" uid="uid://c3u1e0ty6256" path="res://Assets/EnvironmentOutdoorLevel/Textures/BaseAlbedo.png" id="3_t8bk6"]
+[ext_resource type="Shader" path="res://Resources/Shaders/Blur.gdshader" id="5_da447"]
+[ext_resource type="Shader" path="res://Resources/Shaders/Smoke.gdshader" id="5_w5ha5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v4oey"]
+render_priority = 0
+shader = ExtResource("5_w5ha5")
+
+[sub_resource type="QuadMesh" id="QuadMesh_kqnxi"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vtkpa"]
 sky_top_color = Color(0.239216, 0.517647, 0.290196, 1)
@@ -59,18 +67,70 @@ shader_parameter/shadowCol = Color(0.227451, 0.376471, 0.443137, 1)
 shader_parameter/bands = 3
 shader_parameter/color = SubResource("GradientTexture1D_priv4")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_orke5"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_goexy"]
 render_priority = 0
 shader = ExtResource("2_gs1cq")
 shader_parameter/sensitivity = 0.5
-shader_parameter/normControl = 1.365
+shader_parameter/depthControl = 10.0
+shader_parameter/normControl = 1.0
 shader_parameter/colControl = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_orke5"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_goexy")
+shader = ExtResource("5_da447")
 
 [sub_resource type="QuadMesh" id="QuadMesh_rhgbj"]
 flip_faces = true
 size = Vector2(2, 2)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lme4g"]
+render_priority = 0
+shader = ExtResource("5_w5ha5")
+
+[sub_resource type="Curve" id="Curve_7n7ql"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.30625), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_ssolq"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve" id="Curve_1i51h"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_xt1nk"]
+curve_x = SubResource("Curve_7n7ql")
+curve_y = SubResource("Curve_ssolq")
+curve_z = SubResource("Curve_1i51h")
+
+[sub_resource type="Curve" id="Curve_hds61"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_atig3"]
+curve = SubResource("Curve_hds61")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gimov"]
+lifetime_randomness = 0.45
+particle_flag_align_y = true
+particle_flag_disable_z = true
+gravity = Vector3(0, 1.2, 0)
+scale_curve = SubResource("CurveXYZTexture_xt1nk")
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(0, 0.2, 0)
+turbulence_influence_over_life = SubResource("CurveTexture_atig3")
+
+[sub_resource type="QuadMesh" id="QuadMesh_pv4cm"]
+
 [node name="Main" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55731, 4.6842, -4.76837e-07)
+material_override = SubResource("ShaderMaterial_v4oey")
+mesh = SubResource("QuadMesh_kqnxi")
+skeleton = NodePath("../WorldEnvironment")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_5i78t")
@@ -80,6 +140,7 @@ transform = Transform3D(-0.878041, 0.462277, -0.123867, -1.07923e-08, 0.258819, 
 shadow_enabled = true
 directional_shadow_mode = 0
 directional_shadow_blend_splits = true
+directional_shadow_pancake_size = 86.5
 
 [node name="Level" parent="." instance=ExtResource("1_kwsj5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.284418, 0, 0.618691)
@@ -97,7 +158,18 @@ material_override = SubResource("ShaderMaterial_dq5uu")
 surface_material_override/0 = SubResource("ShaderMaterial_dq5uu")
 
 [node name="PostController" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.02919, 4.03979, 0)
 material_override = SubResource("ShaderMaterial_orke5")
 mesh = SubResource("QuadMesh_rhgbj")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.83024, 4.40794, -0.755837)
+visible = false
+material_override = SubResource("ShaderMaterial_lme4g")
+amount = 24
+lifetime = 5.0
+transform_align = 1
+process_material = SubResource("ParticleProcessMaterial_gimov")
+draw_pass_1 = SubResource("QuadMesh_pv4cm")
 
 [editable path="Level"]

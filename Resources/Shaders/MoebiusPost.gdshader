@@ -54,6 +54,8 @@ void fragment() {
 	bool colOutline = (sobel(screenTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * colControl < sensitivity);
 	bool normOutline = (sobel(normalTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * normControl < sensitivity);
 	ALBEDO = textureLod(screenTex,SCREEN_UV,0.0).rgb * float(colOutline && normOutline);
+	
+	
 }
 
 //void light() {
