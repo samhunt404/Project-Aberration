@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshaded;
+render_mode unshaded,blend_mul;
 
 const mat3 sobel_x = mat3(vec3(-1.0,0.0,1.0),
 						vec3(-2.0,0.0,2.0),
@@ -12,9 +12,9 @@ uniform sampler2D depthTex : hint_depth_texture;
 uniform sampler2D screenTex : hint_screen_texture;
 uniform sampler2D normalTex : hint_normal_roughness_texture;
 
-uniform float sensitivity = 0.5;
-uniform float depthControl = 0.01;
-uniform float normControl = 0.01;
+uniform float sensitivity = 0.25;
+uniform float depthControl = 100;
+uniform float normControl = 0.4;
 uniform float colControl = 1;
 
 void vertex() {
@@ -22,7 +22,7 @@ void vertex() {
 }
 float valFromRGB(vec3 col)
 {
-	return (col.r + col.b + col.g)/3.0;
+	return clamp((col.r + col.b + col.g)/3.0,0.0,1.0);
 }
 float sobel(sampler2D sampler,vec2 coord, vec2 pixSize)
 {
@@ -55,11 +55,10 @@ float sobel(sampler2D sampler,vec2 coord, vec2 pixSize)
 }
 
 void fragment() {
-	bool colOutline = (sobel(screenTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * colControl < sensitivity);
-	bool normOutline = (sobel(normalTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * normControl < sensitivity);
-	bool depthOutline = (sobel(depthTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * depthControl < sensitivity);
-	ALBEDO = vec3(0.0);
-	ALPHA = 1.0 - float(colOutline && normOutline && depthOutline);
+	float colOutline = (sobel(screenTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * colControl);
+	float normOutline = (sobel(normalTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * normControl);
+	float depthOutline = (sobel(depthTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * depthControl);
+	ALBEDO = vec3(1.0 - max(normOutline,max(colOutline,depthOutline)));
 }
 
 //void light() {

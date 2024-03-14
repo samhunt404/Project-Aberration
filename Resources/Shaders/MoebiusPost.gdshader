@@ -1,61 +1,35 @@
 shader_type spatial;
 render_mode unshaded;
 
-const mat3 sobel_x = mat3(vec3(-1.0,0.0,1.0),
-						vec3(-2.0,0.0,2.0),
-						vec3(-1.0,0.0,1.0));
-						
-const mat3 sobel_y = mat3(vec3(-1.0,-2.0,-1.0),
-						vec3(0.0,0.0,0.0),
-						vec3(1.0,2.0,1.0));
-uniform sampler2D screenTex : hint_screen_texture;
-uniform sampler2D normalTex : hint_normal_roughness_texture;
-uniform float offset = 0.1;
-uniform float sensitivity = 0.5;
-uniform float normControl = 0.001;
-uniform float colControl = 1;
+uniform sampler2D screen_texture : hint_screen_texture;
 void vertex() {
-	VERTEX += NORMAL * offset;
+	POSITION = vec4(VERTEX,1.0);
 }
 float valFromRGB(vec3 col)
 {
 	return (col.r + col.b + col.g)/3.0;
 }
-float sobel(sampler2D sampler,vec2 coord, vec2 pixSize)
+float findOutline(sampler2D tex, float dis,vec2 uv,vec2 pixelSize)
 {
-	vec3 startColor = textureLod(sampler,coord,0.0).rgb;
-	//has sqrt in length function
-	float basis =  valFromRGB(startColor);
-	float Gx = 0.0;
-	float Gy = 0.0;
-	//gx sum
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(-1.0 * pixSize.x,-1.0 * pixSize.y),0.0).rgb) * sobel_x[0].x;
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(0.0,-1.0 * pixSize.y),0.0).rgb) * sobel_x[0].y;
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(1.0 * pixSize.x,-1.0 * pixSize.y),0.0).rgb) * sobel_x[0].z;
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(-1.0 * pixSize.x,0.0),0.0).rgb) * sobel_x[1].x;
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(1.0 * pixSize.x,0.0),0.0).rgb) * sobel_x[1].z;
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(-1.0 * pixSize.x,1.0 * pixSize.y),0.0).rgb) * sobel_x[2].x;
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(0.0,1.0 * pixSize.y),0.0).rgb) * sobel_x[2].y;
-	Gx += valFromRGB(textureLod(sampler,coord + vec2(1.0 * pixSize.x,1.0 * pixSize.y),0.0).rgb) * sobel_x[2].z;
-	//gy sums
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(-1.0 * pixSize.x,-1.0 * pixSize.y),0.0).rgb) * sobel_y[0].x;
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(0.0,-1.0 * pixSize.y),0.0).rgb) * sobel_y[0].y;
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(1.0 * pixSize.x,-1.0 * pixSize.y),0.0).rgb) * sobel_y[0].z;
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(-1.0 * pixSize.x,0.0),0.0).rgb) * sobel_y[1].x;
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(1.0 * pixSize.x,0.0),0.0).rgb) * sobel_y[1].z;
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(-1.0 * pixSize.x,1.0 * pixSize.y),0.0).rgb) * sobel_y[2].x;
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(0.0,1.0 * pixSize.y),0.0).rgb) * sobel_y[2].y;
-	Gy += valFromRGB(textureLod(sampler,coord + vec2(1.0 * pixSize.x,1.0 * pixSize.y),0.0).rgb) * sobel_y[2].z;
-	//more square root stuff
-	float sob = sqrt((Gx * Gx) + (Gy * Gy));
-	return sob;
+	vec3 base = texture(tex,uv).rgb;
+	vec3 h1 = texture(tex,uv + (vec2(-1,0) * dis * pixelSize)).rgb;
+	vec3 h2 = texture(tex,uv + (vec2(-0.5,1) * dis * pixelSize)).rgb;
+	vec3 h3 = texture(tex,uv + (vec2(0.5,1) * dis * pixelSize)).rgb;
+	vec3 h4 = texture(tex,uv + (vec2(1,0) * dis * pixelSize)).rgb;
+	vec3 h5 = texture(tex,uv + (vec2(0.5,-1) * dis * pixelSize)).rgb;
+	vec3 h6 = texture(tex,uv + (vec2(-0.5,-1) * dis * pixelSize)).rgb;
+	
+	float maxDif = max(max(max(distance(base,h1) , 
+				distance(base,h2) ), 
+				max(distance(base,h3) , 
+				distance(base,h4)) ),
+				max(distance(base,h5) ,
+				distance(base,h6)));
+	return maxDif;
 }
 void fragment() {
-	bool colOutline = (sobel(screenTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * colControl < sensitivity);
-	bool normOutline = (sobel(normalTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * normControl < sensitivity);
-	ALBEDO = textureLod(screenTex,SCREEN_UV,0.0).rgb * float(colOutline && normOutline);
-	
-	
+	float outline = (findOutline(screen_texture,2,SCREEN_UV,1.0/VIEWPORT_SIZE));
+	ALBEDO = min(texture(screen_texture,SCREEN_UV).rgb, vec3(1.0 - clamp(outline * outline * 10.0,0.0,1.0)));
 }
 
 //void light() {

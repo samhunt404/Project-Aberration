@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://dd8th847caten"]
+
+[ext_resource type="PackedScene" uid="uid://be4m3ah6tq276" path="res://Assets/CharacterMeshes/AstroSamurai.blend" id="1_ijg5o"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rokpx"]
+
+[node name="Player" type="RigidBody3D"]
+
+[node name="AstroSamurai" parent="." instance=ExtResource("1_ijg5o")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_rokpx")

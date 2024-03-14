@@ -1,6 +1,8 @@
 shader_type spatial;
 render_mode ambient_light_disabled;
 uniform sampler2D color;
+uniform float roughness = 0.75;
+uniform float metalic = 0.0;
 uniform vec3 shadowCol : source_color;
 uniform sampler2D bump : hint_normal;
 uniform int bands = 3;
@@ -11,6 +13,8 @@ void vertex() {
 void fragment() {
 	ALBEDO = texture(color,UV).rgb;
 	NORMAL_MAP = texture(bump,UV).rgb;
+	ROUGHNESS = roughness;
+	METALLIC = metalic;
 }
 
 void light() {

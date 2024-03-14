@@ -1,11 +1,14 @@
-[gd_scene load_steps=31 format=3 uid="uid://b5wupm5oc4foy"]
+[gd_scene load_steps=40 format=3 uid="uid://b5wupm5oc4foy"]
 
 [ext_resource type="PackedScene" uid="uid://ce1jsq0cfp0wt" path="res://Assets/EnvironmentOutdoorLevel/Level.blend" id="1_kwsj5"]
+[ext_resource type="Texture2D" uid="uid://dhyrx3u8f5o7a" path="res://Assets/EnvironmentOutdoorLevel/Textures/BackgroundOptionA.png" id="2_bmf2b"]
 [ext_resource type="Shader" path="res://Resources/Shaders/Outline.gdshader" id="2_gs1cq"]
 [ext_resource type="Shader" path="res://Resources/Shaders/MoebiusBase.gdshader" id="2_ysk7a"]
 [ext_resource type="Texture2D" uid="uid://c3u1e0ty6256" path="res://Assets/EnvironmentOutdoorLevel/Textures/BaseAlbedo.png" id="3_t8bk6"]
-[ext_resource type="Shader" path="res://Resources/Shaders/Blur.gdshader" id="5_da447"]
 [ext_resource type="Shader" path="res://Resources/Shaders/Smoke.gdshader" id="5_w5ha5"]
+[ext_resource type="PackedScene" uid="uid://dd8th847caten" path="res://Prefabs/CharacterView.tscn" id="6_j8u7g"]
+[ext_resource type="Shader" path="res://Resources/Shaders/Blur.gdshader" id="6_x3ht6"]
+[ext_resource type="PackedScene" uid="uid://cr5c2o7fcjuns" path="res://Assets/CharacterMeshes/Sword.blend" id="8_aqjiw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v4oey"]
 render_priority = 0
@@ -13,19 +16,16 @@ shader = ExtResource("5_w5ha5")
 
 [sub_resource type="QuadMesh" id="QuadMesh_kqnxi"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vtkpa"]
-sky_top_color = Color(0.239216, 0.517647, 0.290196, 1)
-sky_horizon_color = Color(0.796078, 0.854902, 0.862745, 1)
-ground_bottom_color = Color(0.807843, 0.752941, 0.690196, 1)
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_kksby"]
+panorama = ExtResource("2_bmf2b")
 
 [sub_resource type="Sky" id="Sky_rekcw"]
-sky_material = SubResource("ProceduralSkyMaterial_vtkpa")
+sky_material = SubResource("PanoramaSkyMaterial_kksby")
 
 [sub_resource type="Environment" id="Environment_5i78t"]
 background_mode = 2
 background_color = Color(0.211765, 0.309804, 0.231373, 1)
 sky = SubResource("Sky_rekcw")
-glow_enabled = true
 glow_normalized = true
 glow_strength = 1.24
 glow_blend_mode = 1
@@ -42,16 +42,28 @@ noise = SubResource("FastNoiseLite_gkwpe")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_emtjn"]
 render_priority = 0
 shader = ExtResource("2_ysk7a")
-shader_parameter/shadowCol = Color(0.258824, 0.141176, 0.0196078, 1)
+shader_parameter/roughness = 0.75
+shader_parameter/metalic = 0.0
+shader_parameter/shadowCol = Color(0.0705882, 0.207843, 0.0862745, 1)
 shader_parameter/bands = 3
 shader_parameter/color = ExtResource("3_t8bk6")
 shader_parameter/bump = SubResource("NoiseTexture2D_4egbp")
 
+[sub_resource type="Gradient" id="Gradient_fl8f7"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0.933333, 0.184314, 0.92549, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pgmw0"]
+gradient = SubResource("Gradient_fl8f7")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jwnq3"]
 render_priority = 0
 shader = ExtResource("2_ysk7a")
-shader_parameter/shadowCol = null
+shader_parameter/roughness = 0.75
+shader_parameter/metalic = 0.0
+shader_parameter/shadowCol = Color(0.0627451, 0.109804, 0.054902, 1)
 shader_parameter/bands = 3
+shader_parameter/color = SubResource("GradientTexture1D_pgmw0")
 
 [sub_resource type="Gradient" id="Gradient_fg5al"]
 offsets = PackedFloat32Array(1)
@@ -63,22 +75,24 @@ gradient = SubResource("Gradient_fg5al")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dq5uu"]
 render_priority = 0
 shader = ExtResource("2_ysk7a")
+shader_parameter/roughness = 0.75
+shader_parameter/metalic = 0.0
 shader_parameter/shadowCol = Color(0.227451, 0.376471, 0.443137, 1)
 shader_parameter/bands = 3
 shader_parameter/color = SubResource("GradientTexture1D_priv4")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_goexy"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1obom"]
 render_priority = 0
-shader = ExtResource("2_gs1cq")
-shader_parameter/sensitivity = 0.5
-shader_parameter/depthControl = 10.0
-shader_parameter/normControl = 1.0
-shader_parameter/colControl = 1.0
+shader = ExtResource("6_x3ht6")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_orke5"]
-render_priority = 0
-next_pass = SubResource("ShaderMaterial_goexy")
-shader = ExtResource("5_da447")
+render_priority = 1
+next_pass = SubResource("ShaderMaterial_1obom")
+shader = ExtResource("2_gs1cq")
+shader_parameter/sensitivity = 0.25
+shader_parameter/depthControl = 0.1
+shader_parameter/normControl = 1.0
+shader_parameter/colControl = 2.0
 
 [sub_resource type="QuadMesh" id="QuadMesh_rhgbj"]
 flip_faces = true
@@ -124,6 +138,24 @@ turbulence_influence_over_life = SubResource("CurveTexture_atig3")
 
 [sub_resource type="QuadMesh" id="QuadMesh_pv4cm"]
 
+[sub_resource type="TorusMesh" id="TorusMesh_k8awm"]
+
+[sub_resource type="Gradient" id="Gradient_sf5nr"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(1, 0.574152, 0.790448, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_n2n4l"]
+gradient = SubResource("Gradient_sf5nr")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x4mbe"]
+render_priority = 0
+shader = ExtResource("2_ysk7a")
+shader_parameter/roughness = 0.75
+shader_parameter/metalic = 0.0
+shader_parameter/shadowCol = Color(0.117647, 0, 0.396078, 1)
+shader_parameter/bands = 3
+shader_parameter/color = SubResource("GradientTexture1D_n2n4l")
+
 [node name="Main" type="Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -137,8 +169,11 @@ environment = SubResource("Environment_5i78t")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.878041, 0.462277, -0.123867, -1.07923e-08, 0.258819, 0.965926, 0.478585, 0.848123, -0.227254, 0, 0, 0)
+light_color = Color(0.94902, 0.654902, 0.529412, 1)
 shadow_enabled = true
-directional_shadow_mode = 0
+directional_shadow_split_1 = 0.034
+directional_shadow_split_2 = 0.144
+directional_shadow_split_3 = 0.278
 directional_shadow_blend_splits = true
 directional_shadow_pancake_size = 86.5
 
@@ -147,6 +182,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.284418, 0, 0.618691)
 
 [node name="Plane_001" parent="Level" index="0"]
 material_override = SubResource("ShaderMaterial_emtjn")
+cast_shadow = 0
 
 [node name="Gate" parent="Level" index="1"]
 material_override = SubResource("ShaderMaterial_jwnq3")
@@ -158,7 +194,7 @@ material_override = SubResource("ShaderMaterial_dq5uu")
 surface_material_override/0 = SubResource("ShaderMaterial_dq5uu")
 
 [node name="PostController" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.02919, 4.03979, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.109131, 1.70056, 0.374597)
 material_override = SubResource("ShaderMaterial_orke5")
 mesh = SubResource("QuadMesh_rhgbj")
 
@@ -171,5 +207,17 @@ lifetime = 5.0
 transform_align = 1
 process_material = SubResource("ParticleProcessMaterial_gimov")
 draw_pass_1 = SubResource("QuadMesh_pv4cm")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.669934, -0.74242, 0, 0.74242, 0.669934, -1.7931, 2.18489, 1.48683)
+mesh = SubResource("TorusMesh_k8awm")
+skeleton = NodePath("../Player")
+surface_material_override/0 = SubResource("ShaderMaterial_x4mbe")
+
+[node name="Player" parent="." instance=ExtResource("6_j8u7g")]
+transform = Transform3D(1, 0, 0, 0, 0.540182, -0.841549, 0, 0.841549, 0.540182, 0, 0, 0)
+
+[node name="Sword" parent="." instance=ExtResource("8_aqjiw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1)
 
 [editable path="Level"]
