@@ -59,8 +59,10 @@ void fragment() {
 	float normOutline = (sobel(normalTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * normControl);
 	float depthOutline = (sobel(depthTex,SCREEN_UV,1.0/VIEWPORT_SIZE) * depthControl);
 	ALBEDO = vec3(1.0 - max(normOutline,max(colOutline,depthOutline)));
+	float x = length(dFdxCoarse((texture(screenTex,SCREEN_UV).rgb)));
+	float y = length(dFdyCoarse((texture(screenTex,SCREEN_UV).rgb)));
+	ALBEDO = 1.0 - vec3(x + y);
 }
-
 //void light() {
 	// Called for every pixel for every light affecting the material.
 	// Uncomment to replace the default light processing function with this one.

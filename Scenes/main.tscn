@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://b5wupm5oc4foy"]
+[gd_scene load_steps=41 format=3 uid="uid://b5wupm5oc4foy"]
 
 [ext_resource type="PackedScene" uid="uid://ce1jsq0cfp0wt" path="res://Assets/EnvironmentOutdoorLevel/Level.blend" id="1_kwsj5"]
 [ext_resource type="Texture2D" uid="uid://dhyrx3u8f5o7a" path="res://Assets/EnvironmentOutdoorLevel/Textures/BackgroundOptionA.png" id="2_bmf2b"]
@@ -6,9 +6,8 @@
 [ext_resource type="Shader" path="res://Resources/Shaders/MoebiusBase.gdshader" id="2_ysk7a"]
 [ext_resource type="Texture2D" uid="uid://c3u1e0ty6256" path="res://Assets/EnvironmentOutdoorLevel/Textures/BaseAlbedo.png" id="3_t8bk6"]
 [ext_resource type="Shader" path="res://Resources/Shaders/Smoke.gdshader" id="5_w5ha5"]
-[ext_resource type="PackedScene" uid="uid://dd8th847caten" path="res://Prefabs/CharacterView.tscn" id="6_j8u7g"]
+[ext_resource type="PackedScene" uid="uid://dd8th847caten" path="res://Prefabs/PlayerCharacter.tscn" id="6_j8u7g"]
 [ext_resource type="Shader" path="res://Resources/Shaders/Blur.gdshader" id="6_x3ht6"]
-[ext_resource type="PackedScene" uid="uid://cr5c2o7fcjuns" path="res://Assets/CharacterMeshes/Sword.blend" id="8_aqjiw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v4oey"]
 render_priority = 0
@@ -156,6 +155,10 @@ shader_parameter/shadowCol = Color(0.117647, 0, 0.396078, 1)
 shader_parameter/bands = 3
 shader_parameter/color = SubResource("GradientTexture1D_n2n4l")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_tntej"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_r8w6q"]
+
 [node name="Main" type="Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -209,15 +212,27 @@ process_material = SubResource("ParticleProcessMaterial_gimov")
 draw_pass_1 = SubResource("QuadMesh_pv4cm")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.669934, -0.74242, 0, 0.74242, 0.669934, -1.7931, 2.18489, 1.48683)
+transform = Transform3D(-0.0350962, -0.707638, 0.705702, -0.553981, -0.573944, -0.603069, 0.831789, -0.412111, -0.371875, -1.7931, 2.18489, 1.48683)
 mesh = SubResource("TorusMesh_k8awm")
 skeleton = NodePath("../Player")
 surface_material_override/0 = SubResource("ShaderMaterial_x4mbe")
 
 [node name="Player" parent="." instance=ExtResource("6_j8u7g")]
-transform = Transform3D(1, 0, 0, 0, 0.540182, -0.841549, 0, 0.841549, 0.540182, 0, 0, 0)
+transform = Transform3D(0.84851, -0.0249278, 0.528592, 1.55323e-09, 0.998891, 0.0471065, -0.529179, -0.0399703, 0.847569, 1.21526, 1.746, -1.70957)
+gravity_scale = 0.0
 
-[node name="Sword" parent="." instance=ExtResource("8_aqjiw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1)
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 0, 1.72841, -1.8187)
+gravity_scale = 0.0
+linear_velocity = Vector3(3, 0, 2)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("SphereShape3D_tntej")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+mesh = SubResource("SphereMesh_r8w6q")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 0.494409, 1.72841, -1.87832)
 
 [editable path="Level"]
